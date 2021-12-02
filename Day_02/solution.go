@@ -23,6 +23,25 @@ func FindEndpoint(directions *[][]string, start_x int, start_y int) (int, int) {
 	return start_x, start_y
 }
 
+func AimEndpoint(directions *[][]string, start_x int, start_y int, start_aim int) (int, int) {
+	for _, v := range *directions {
+		delta, _ := strconv.Atoi(v[1])
+		switch v[0] {
+		case "down":
+			start_aim += delta
+		case "up":
+			start_aim -= delta
+		case "forward":
+			start_x += delta
+			start_y += start_aim * delta
+		case "backward":
+			start_x -= delta
+			start_y -= start_aim * delta
+		}
+	}
+	return start_x, start_y
+}
+
 func ReadFile(filename string) ([][]string, error) {
 	fileBytes, err := ioutil.ReadFile(filename)
 
