@@ -6,6 +6,41 @@ import (
 	"strings"
 )
 
+func In(lst []int, val int) bool {
+    for _,j := range lst {
+        if j == val {
+            return true
+        }
+    }
+    return false
+}
+
+func FindLoser(moves []int, boards [][][]int) int {
+    board_size := len(boards[0])
+    found := make([][][]bool,len(boards))
+    var winners []int
+    var winner_scores []int
+    for i := 0; i < len(boards); i++ {
+        found[i] = make([][]bool, board_size)
+        for j := 0; j < board_size; j++ {
+            found[i][j] = make([]bool, board_size)
+        }
+    }
+    for _, m := range moves {
+        for i, b := range boards {
+            x, y := FindIndex(b, m)
+            if x >= 0 {
+                found[i][x][y] = true
+            }
+            if CheckBingo(found[i]) && !In(winners, i){
+                winners = append(winners, i)
+                winner_scores = append(winner_scores,CalcScore(b, found[i], m))
+            }
+        }
+    }
+    return winner_scores[len(winner_scores)-1]
+}
+
 func FindWinner(moves []int, boards [][][]int) int {
     board_size := len(boards[0])
     found := make([][][]bool,len(boards))
