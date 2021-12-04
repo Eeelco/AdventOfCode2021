@@ -28,13 +28,15 @@ func FindLoser(moves []int, boards [][][]int) int {
     }
     for _, m := range moves {
         for i, b := range boards {
-            x, y := FindIndex(b, m)
-            if x >= 0 {
-                found[i][x][y] = true
-            }
-            if CheckBingo(found[i]) && !In(winners, i){
-                winners = append(winners, i)
-                winner_scores = append(winner_scores,CalcScore(b, found[i], m))
+            if !In(winners, i){
+                x, y := FindIndex(b, m)
+                if x >= 0 {
+                    found[i][x][y] = true
+                }
+                if CheckBingo(found[i]){
+                    winners = append(winners, i)
+                    winner_scores = append(winner_scores,CalcScore(b, found[i], m))
+                }
             }
         }
     }
