@@ -6,6 +6,15 @@ import (
 	"strconv"
 	"strings"
 )
+
+func GetResult(lines [][][]int, no_diagonals bool) int {
+    line_points := make([][][]int, len(lines))
+    for i,v := range lines {
+        line_points[i] = Calcline(v, no_diagonals)
+    }
+    return CountIntersections(line_points)
+}
+
 func CountIntersections(lines [][][]int) int {
     data := make(map[string]int)
     for _, v := range lines {
