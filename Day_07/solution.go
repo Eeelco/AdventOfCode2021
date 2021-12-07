@@ -15,6 +15,8 @@ func GetBestMedian(data []int) int {
 		cost := WeightedDistances(data, v)
 		if cost < best {
 			best = cost
+		} else if cost > best {
+			break
 		}
 	}
 	return best
