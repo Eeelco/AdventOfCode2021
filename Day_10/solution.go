@@ -49,11 +49,18 @@ func CorruptedErrors(data []string) int {
     costs := map[rune]int{
         ')':3, ']': 57, '}':1197, '>':25137, '!': 0,
     }
-    tot_cost := 0
+    // tot_cost := 0
+    cost_chan := make(chan int, len(data))
     for _, v := range data {
-        c, _ := FindCorruptChar(v)
-        tot_cost += costs[c]
+        go func(v string) {
+            c, _ := FindCorruptChar(v)
+            cost_chan <- costs[c]
+        } (v);
+        // c, _ := FindCorruptChar(v)
+        // tot_cost += costs[c]
     }
+    tot_cost := 0
+    for i := 0; i < len(data); i++ {tot_cost += <-cost_chan}
     return tot_cost
 }
 
