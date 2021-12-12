@@ -24,8 +24,8 @@ func NewGraph(start string, end string, nodes []string, connections []string, do
     for _, v := range connections {
         tmp := strings.Split(v, "-")
         a, b := tmp[0], tmp[1]
-        g.get(a).neighbors = append(g.get(a).neighbors, g.nodes[g.indices[b]])
-        g.get(b).neighbors = append(g.get(b).neighbors, g.nodes[g.indices[a]])
+        g.get(a).neighbors = append(g.get(a).neighbors, *g.get(b))
+        g.get(b).neighbors = append(g.get(b).neighbors, *g.get(a))
     }
     if !double_visit {
         g.DFS_construct_paths()
