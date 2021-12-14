@@ -49,26 +49,17 @@ func part1(filename string, iterations int) (int, error) {
     }
     rules_map := make_rules(rules)
     pairs := make_pairs(polymer)
+    letters := make_letters(polymer)
     for i := 0; i < iterations; i++ {
-        pairs = pair_insertion(pairs, rules_map)
+        pairs, letters = pair_insertion(pairs, letters, rules_map)
     }
-    return find_diff(pairs), nil
+    return find_diff(letters), nil
 }
 
-func find_diff(pairs map[string]int) int {
-    letter_counts := make(map[rune]int)
-    for k, v := range pairs {
-        for _, l := range k {
-            if _, ok := letter_counts[l]; ok {
-                letter_counts[l] += v
-            } else {
-                letter_counts[l] = v
-            }
-        }
-    }
+func find_diff(letters map[rune]int) int {
     max_val := 0
     min_val := int(^uint(0) >> 1)
-    for _, v := range letter_counts {
+    for _, v := range letters {
         if v < min_val {
             min_val = v
         }
@@ -76,14 +67,10 @@ func find_diff(pairs map[string]int) int {
             max_val = v
         }
     }
-    if max_val %2 == 1 {
-        return (max_val - min_val)/2 + 1
-    } else {
-        return (max_val - min_val)/2
-    }
+    return (max_val - min_val)
 }
 
-func pair_insertion(polymer_pairs map[string]int, rules map[string][]string) map[string]int {
+func pair_insertion(polymer_pairs map[string]int, letters map[rune]int, rules map[string][]string) (map[string]int, map[rune] int) {
     out := make(map[string]int)
     for k, w := range polymer_pairs {
         if new, ok := rules[k]; ok {
@@ -94,11 +81,28 @@ func pair_insertion(polymer_pairs map[string]int, rules map[string][]string) map
                     out[v] = w
                 }
             }
+            newl := rune(new[0][1])
+            if _, ok := letters[newl]; ok {
+                letters[newl] += w
+            } else {
+                letters[newl] = w
+            }
+        }
+    }
+    return out, letters
+}
+
+func make_letters(polymer string) map[rune]int {
+    out := make(map[rune]int)
+    for _, v := range polymer {
+        if _, ok := out[v]; ok {
+            out[v]++
+        } else {
+            out[v] = 1
         }
     }
     return out
 }
-
 func make_pairs(polymer string) map[string]int {
     out := make(map[string]int)
     for i := 0; i < len(polymer)-1; i++ {
