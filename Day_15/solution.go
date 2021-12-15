@@ -73,7 +73,8 @@ func make_larger_grid(grid [][]Node, times int) [][]Node {
 }
 
 func h(start Node, end Node) float64 {
-    return math.Sqrt(math.Pow(float64(start.X)-float64(end.X), 2) + math.Pow(float64(start.Y)-float64(end.Y), 2))
+    // return math.Sqrt(math.Pow(float64(start.X)-float64(end.X), 2) + math.Pow(float64(start.Y)-float64(end.Y), 2))
+    return math.Abs(float64(start.X)-float64(end.X)) + math.Abs(float64(start.Y)-float64(end.Y))
 }
 
 func A_star(start Node, end Node, all_nodes[][]Node) ([]Node, float64, error){
