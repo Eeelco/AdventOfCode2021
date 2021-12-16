@@ -89,30 +89,30 @@ func ParsePacket(data string) (Packet, string) {
 	data = data[6:]
 	if type_ID == 4 {
 		return ParseValue(pack, data)
-	} else {
-		length_type := data[0]
-		data = data[1:]
-		if length_type == '0' {
-			packet_length, _ := strconv.ParseUint(data[:15], 2, 15)
-			data = data[15:]
-			sub_packets := data[:packet_length]
-			data = data[packet_length:]
-			for len(sub_packets) > 0 {
-				newpack, rest := ParsePacket(sub_packets)
-				sub_packets = rest
-				pack.children = append(pack.children, newpack)
-			}
-			return pack, data
-		} else {
-			child_count, _ := strconv.ParseUint(data[:11], 2, 11)
-			data = data[11:]
-			for uint64(len(pack.children)) < child_count {
-				new_child, rest := ParsePacket(data)
-				data = rest
-				pack.children = append(pack.children, new_child)
-			}
-			return pack, data
+	}
+
+	length_type := data[0]
+	data = data[1:]
+	if length_type == '0' {
+		packet_length, _ := strconv.ParseUint(data[:15], 2, 15)
+		data = data[15:]
+		sub_packets := data[:packet_length]
+		data = data[packet_length:]
+		for len(sub_packets) > 0 {
+			new_child, rest := ParsePacket(sub_packets)
+			sub_packets = rest
+			pack.children = append(pack.children, new_child)
 		}
+		return pack, data
+	} else {
+		child_count, _ := strconv.ParseUint(data[:11], 2, 11)
+		data = data[11:]
+		for uint64(len(pack.children)) < child_count {
+			new_child, rest := ParsePacket(data)
+			data = rest
+			pack.children = append(pack.children, new_child)
+		}
+		return pack, data
 	}
 }
 
