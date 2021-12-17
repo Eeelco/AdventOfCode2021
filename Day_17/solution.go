@@ -21,12 +21,14 @@ func (a *Area) misses(x int, y int) bool {
 
 func main() {
     test_target := Area{20, 30, -10, -5}
-    ymax := find_best_parabola(test_target)
+    // ymax := find_best_parabola(test_target)
+    ymax := find_highest_y(test_target)
     if ymax != 45 {
         fmt.Printf("Test error. Expected 45, got %d\n", ymax)
     }
     real_target := Area{230, 283, -107, -57}
-    ymax = find_best_parabola(real_target)
+    // ymax = find_best_parabola(real_target)
+    ymax = find_highest_y(real_target)
     fmt.Printf("Part 1 solution: %d\n\n", ymax)
 
     all_hits := find_all_parabolas(test_target)
@@ -35,6 +37,11 @@ func main() {
     }
     all_hits = find_all_parabolas(real_target)
     fmt.Printf("Part 2 solution: %d\n\n", all_hits)
+}
+
+func find_highest_y(target Area) int {
+    abs_y := -target.ymin
+    return int(0.5 * float64(abs_y) * float64(abs_y+1)) - abs_y
 }
 
 func find_best_parabola(target Area) int {
