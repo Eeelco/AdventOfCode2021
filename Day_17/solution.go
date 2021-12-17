@@ -38,10 +38,11 @@ func main() {
 }
 
 func find_best_parabola(target Area) int {
-    highest_vx := target.xmin
+    min_vx := int(0.5 * (math.Sqrt(8 * float64(target.xmin)) - 1))
+    max_vx := target.xmax
     best_ymax := 0
-    for vx:= 1; vx < highest_vx; vx++ {
-        for vy := 1; vy < highest_vx; vy++ {
+    for vx:= min_vx; vx <= max_vx; vx++ {
+        for vy := target.ymin; vy <= max_vx; vy++ {
             ymax := parabola(vx, vy, target)
             if ymax > best_ymax {
                 best_ymax = ymax
@@ -52,10 +53,11 @@ func find_best_parabola(target Area) int {
 }
 
 func find_all_parabolas(target Area) int {
-    highest_vx := target.xmax
+    min_vx := int(0.5 * (math.Sqrt(8 * float64(target.xmin)) - 1))
+    max_vx := target.xmax
     parabola_count := 0
-    for vx:= 1; vx <= highest_vx; vx++ {
-        for vy := -highest_vx; vy <=highest_vx; vy++ {
+    for vx:= min_vx; vx <= max_vx; vx++ {
+        for vy := target.ymin; vy <= max_vx; vy++ {
             ymax := parabola(vx, vy, target)
             if ymax > -1 {
                 parabola_count++
