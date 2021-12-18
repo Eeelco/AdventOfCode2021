@@ -125,7 +125,7 @@ func traverse(n *Node, left_nb *Node, right_nb *Node) bool {
         }
         l := &Node{lv, n.depth + 1, nil, nil}
         r := &Node{rv, n.depth + 1, nil, nil}
-        n = &Node{-1, n.depth, l, r}
+        *n = Node{-1, n.depth, l, r}
         return true
     }
 
