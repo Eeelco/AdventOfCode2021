@@ -16,13 +16,10 @@ type Node struct {
 
 func AddNumbers(nrs []string) *Node {
 	a := MakeTree(nrs[0])
-	// fmt.Println(print_tree(a))
 	b := MakeTree(nrs[1])
-	// fmt.Println(print_tree(b))
 	c := add(a, b)
 	reduce(c)
 	for i := 2; i < len(nrs); i++ {
-		// fmt.Println(print_tree(c))
 		c = add(c, MakeTree(nrs[i]))
 		reduce(c)
 	}
@@ -103,9 +100,17 @@ func print_tree(n *Node) string {
 }
 
 func reduce(n *Node) {
-	v := traverse(n, nil, nil)
-	for v {
-		v = traverse(n, nil, nil)
+	for true  {
+		v := traverse(n, nil, nil, explode)
+		a := v
+		for v {
+			v = traverse(n, nil, nil, explode)
+		}
+		v = traverse(n, nil, nil, split)
+		b := v
+		if !a && !b {
+			break
+		}
 	}
 }
 
@@ -158,17 +163,10 @@ func get_left_nb(n *Node) *Node {
 	return nil
 }
 
-func traverse(n *Node, left_nb *Node, right_nb *Node) bool {
-	if n.left != nil {
-		s := traverse(n.left, left_nb, n.right)
-		if s {
-			return true
-		}
-	}
-
+func explode(n *Node, left_nb *Node, right_nb *Node) bool {
 	if n.depth > 3 && n.value == -1 &&
-		n.left != nil && n.left.value != -1 &&
-		n.right != nil && n.right.value != -1 {
+	n.left != nil && n.left.value != -1 &&
+	n.right != nil && n.right.value != -1 {
 		if left_nb != nil {
 			get_left_nb(left_nb).value += n.left.value
 		}
@@ -178,6 +176,10 @@ func traverse(n *Node, left_nb *Node, right_nb *Node) bool {
 		*n = Node{0, n.depth, nil, nil}
 		return true
 	}
+	return false
+}
+
+func split(n *Node, left_nb *Node, right_nb *Node) bool {
 	if n.value >= 10 {
 		lv := n.value / 2
 		rv := n.value / 2
@@ -189,9 +191,24 @@ func traverse(n *Node, left_nb *Node, right_nb *Node) bool {
 		*n = Node{-1, n.depth, l, r}
 		return true
 	}
+	return false
+}
+
+func traverse(n *Node, left_nb *Node, right_nb *Node, f func(*Node, *Node, *Node) bool) bool {
+	if n.left != nil {
+		s := traverse(n.left, left_nb, n.right, f)
+		if s {
+			return true
+		}
+	}
+
+	t := f(n, left_nb, right_nb)
+	if t {
+		return true
+	}
 
 	if n.right != nil {
-		s := traverse(n.right, n.left, right_nb)
+		s := traverse(n.right, n.left, right_nb, f)
 		if s {
 			return true
 		}
