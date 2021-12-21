@@ -2,47 +2,51 @@ package main
 
 import "math"
 
-type Point []float64
+type Point struct {
+    x float64
+    y float64
+    z float64
+}
+type Line struct {
+    first Point
+    second Point
+}
 
 func x_90deg_rot(point Point) Point {
-    return Point{point[0], -point[2], point[1]}
+    return Point{point.x, -point.z, point.y}
 }
 func y_90deg_rot(point Point) Point {
-    return Point{point[2], point[1], -point[0]}
+    return Point{point.z, point.y, -point.x}
 }
 func z_90deg_rot(point Point) Point {
-    return Point{-point[1], point[0], point[2]}
+    return Point{-point.y, point.x, point.z}
 }
 
 func sub(a Point, b Point) Point {
-    return Point{a[0]-b[0],a[1]-b[1],a[2]-b[2]}
+    return Point{a.x-b.x,a.y-b.y,a.z-b.z}
 }
 func add(a Point, b Point) Point {
-    return Point{a[0]+b[0],a[1]+b[1],a[2]+b[2]}
+    return Point{a.x+b.x,a.y+b.y,a.z+b.z}
 }
 
 func dist(p1 Point, p2 Point) float64 {
-    return math.Sqrt(math.Pow(p1[0] - p2[0],2) + math.Pow(p1[1] - p2[1],2) + math.Pow(p1[2] - p2[2],2))
+    return math.Sqrt(math.Pow(p1.x - p2.x,2) + math.Pow(p1.y - p2.y,2) + math.Pow(p1.z - p2.z,2))
 }
 
-func Union(a []float64, b []float64) []float64 {
-    var x []float64
-    var y []float64
-    if len(a) > len(b) {
-        x = a
-        y = b
-    } else {
-        x = b
-        y = a
-    }
-    for _, v := range x {
-        if !contains(y, v) {
-            y = append(y, v)
+func Intersect(a map[Line]float64, b map[Line]float64) ([]float64, map[Line]float64, map[Line]float64) {
+    var set1lines map[Line]float64
+    var set2lines map[Line]float64
+    var out []float64
+    for k, v := range a {
+        if contains(b, v) {
+            out = append(out, v)
+            set1lines[k] = v
+            set2lines[getKey(b, v)] = v
         }
     } 
-    return y
+    return out, set1lines, set2lines
 }
-func contains(s []float64, str float64) bool {
+func contains(s map[Line]float64, str float64) bool {
 	for _, v := range s {
 		if v == str {
 			return true
@@ -50,4 +54,13 @@ func contains(s []float64, str float64) bool {
 	}
 
 	return false
+}
+
+func getKey(s map[Line]float64, t float64) Line {
+    for k, v := range s {
+        if v == t {
+            return k
+        }
+    }
+    return Line{}
 }
